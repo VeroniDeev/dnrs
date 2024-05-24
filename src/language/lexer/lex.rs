@@ -41,7 +41,7 @@ impl Lexer {
             match char.as_str() {
                 ":" => {
                     if !token.is_empty() {
-                        self.tokens.push(Token::Key(token));
+                        self.tokens.push(Token::Identifier(token));
                     }
                     self.tokens.push(Token::Colons);
                     token = String::new();
@@ -80,19 +80,19 @@ impl Lexer {
 
             match token.as_str() {
                 "domain" => {
-                    self.tokens.push(Token::Domain);
+                    self.tokens.push(Token::Identifier(token));
                     token = String::new();
                 }
                 "ttl" => {
-                    self.tokens.push(Token::TTL);
+                    self.tokens.push(Token::Identifier(token));
                     token = String::new();
                 }
                 "type" => {
-                    self.tokens.push(Token::Type);
+                    self.tokens.push(Token::Identifier(token));
                     token = String::new();
                 }
                 "subdomain" => {
-                    self.tokens.push(Token::Subdomain);
+                    self.tokens.push(Token::Identifier(token));
                     token = String::new();
                 }
                 _ => {}

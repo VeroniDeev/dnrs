@@ -1,11 +1,8 @@
 use crate::structs::question::Qtype;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Token {
-    Domain,
-    TTL,
-    Type,
-    Subdomain,
+    Identifier(String),
     Equals,
     OpenBrace,
     Colons,
@@ -15,5 +12,4 @@ pub enum Token {
     ValueInt(i32),
     NewLines,
     Qtype(Qtype),
-    Key(String),
 }

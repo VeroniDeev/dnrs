@@ -1,4 +1,4 @@
-mod language;
-mod structs;
+pub mod language;
+pub mod structs;
 
 fn main() {}
