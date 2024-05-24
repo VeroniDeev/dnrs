@@ -1,5 +1,5 @@
 #[derive(Debug)]
-enum Qtype {
+pub enum Qtype {
     A = 1,
     NS = 2,
     MD = 3,
@@ -40,6 +40,29 @@ impl Qtype {
             15 => Self::MX,
             16 => Self::TXT,
             28 => Self::AAAA,
+            _ => Self::Unknow,
+        }
+    }
+
+    pub fn with_string(string: String) -> Self {
+        match string.as_str() {
+            "A" => Self::A,
+            "NS" => Self::NS,
+            "MD" => Self::MD,
+            "MF" => Self::MF,
+            "CNAME" => Self::CNAME,
+            "SOA" => Self::SOA,
+            "MB" => Self::MB,
+            "MG" => Self::MG,
+            "MR" => Self::MR,
+            "NULL" => Self::NULL,
+            "WKS" => Self::WKS,
+            "PTR" => Self::PTR,
+            "HINFO" => Self::HINFO,
+            "MINFO" => Self::MINFO,
+            "MX" => Self::MX,
+            "TXT" => Self::TXT,
+            "AAAA" => Self::AAAA,
             _ => Self::Unknow,
         }
     }
