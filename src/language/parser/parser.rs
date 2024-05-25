@@ -1,6 +1,14 @@
+use crate::{language::lexer::token::Token, structs::question::Qtype};
 use std::collections::BTreeMap;
 
-use crate::{language::lexer::token::Token, structs::question::Qtype};
+#[derive(Debug)]
+pub enum ParseError {
+    UnexpectedToken(String),
+    UnexpectedEndOfInput,
+    InvalidLiteral(String),
+    MissingToken(String),
+    InvalidSyntax(String),
+}
 
 #[derive(Debug, Clone)]
 pub enum Literal {
@@ -25,32 +33,46 @@ impl Parser {
         }
     }
 
-    pub fn parser(&mut self) {
+    pub fn parser(&mut self) -> Result<(), ParseError> {
         while self.index < self.tokens.len() {
-            self.parse_statement();
+            match self.parse_statement() {
+                Ok(_) => {}
+                Err(err) => return Err(err),
+            }
         }
+        Ok(())
     }
 
-    fn parse_statement(&mut self) {
+    fn parse_statement(&mut self) -> Result<(), ParseError> {
         match self.tokens[self.index] {
-            Token::Identifier(_) => {
-                self.parse_expression();
+            Token::Identifier(_) => match self.parse_expression() {
+                Ok(_) => {}
+                Err(err) => return Err(err),
+            },
+            _ => {
+                return Err(ParseError::MissingToken(String::from(
+                    "We are exept to receive a name",
+                )))
             }
-            _ => {}
         }
         self.index += 1;
+        Ok(())
     }
 
-    fn parse_expression(&mut self) {
+    fn parse_expression(&mut self) -> Result<(), ParseError> {
         let identifier: String = self.tokens[self.index].as_identifier().unwrap();
         self.index += 1;
 
         match self.tokens[self.index] {
-            Token::Equals | Token::Colons => {}
-            _ => {}
+            Token::Equals | Token::Colons => {
+                self.index += 1;
+            }
+            _ => {
+                return Err(ParseError::MissingToken(String::from(
+                    "We are except to receive a equal or colons",
+                )))
+            }
         }
-
-        self.index += 1;
 
         match &self.tokens[self.index] {
             Token::ValueInt(value) => {
@@ -73,33 +95,50 @@ impl Parser {
 
                         self.index += 1;
                     }
-                    _ => {}
+                    _ => {
+                        return Err(ParseError::InvalidLiteral(String::from(
+                            "We are expect to receive a string",
+                        )))
+                    }
                 }
 
                 if self.tokens[self.index] != Token::Guillemet {}
             }
 
-            Token::OpenBrace => {
-                let object: BTreeMap<String, Literal> = self.parse_block();
-                self.properties
-                    .insert(identifier, Literal::Object(Box::new(object)));
-            }
+            Token::OpenBrace => match self.parse_block() {
+                Ok(object) => {
+                    self.properties
+                        .insert(identifier, Literal::Object(Box::new(object)));
+                }
+                Err(err) => return Err(err),
+            },
 
-            _ => {}
+            _ => {
+                return Err(ParseError::UnexpectedToken(String::from(
+                    "Unexpected value",
+                )))
+            }
         }
+
+        Ok(())
     }
 
-    fn parse_block(&mut self) -> BTreeMap<String, Literal> {
+    fn parse_block(&mut self) -> Result<BTreeMap<String, Literal>, ParseError> {
         let mut identifier: String = String::new();
         self.index += 1;
         let mut literal: BTreeMap<String, Literal> = BTreeMap::new();
+        let mut is_brace_closed = false;
 
-        while self.tokens[self.index] != Token::CloseBrace {
-            match &self.tokens[self.index] {
-                Token::OpenBrace => {
-                    let object: BTreeMap<String, Literal> = self.parse_block();
-                    literal.insert(identifier.clone(), Literal::Object(Box::new(object)));
-                }
+        while let Some(token) = self.tokens.get(self.index) {
+            match token {
+                Token::OpenBrace => match self.parse_block() {
+                    Ok(object) => {
+                        literal.insert(identifier.clone(), Literal::Object(Box::new(object)));
+                    }
+                    Err(_) => {
+                        return Err(ParseError::InvalidSyntax(String::from("Invalid syntax")));
+                    }
+                },
 
                 Token::Identifier(value) => {
                     identifier = value.clone();
@@ -115,12 +154,23 @@ impl Parser {
                     literal.insert(identifier.clone(), Literal::Qtype(value.clone()));
                 }
 
+                Token::CloseBrace => {
+                    is_brace_closed = true;
+                    break;
+                }
+
                 _ => {}
             }
 
             self.index += 1;
         }
 
-        return literal;
+        if is_brace_closed {
+            Ok(literal)
+        } else {
+            Err(ParseError::MissingToken(String::from(
+                "We are expecting a closing brace for the object",
+            )))
+        }
     }
 }

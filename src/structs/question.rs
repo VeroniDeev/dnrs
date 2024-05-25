@@ -69,7 +69,7 @@ impl Qtype {
 }
 
 #[derive(Debug)]
-enum Qclass {
+pub enum Qclass {
     IN = 1,
     Unknow,
 }
@@ -85,9 +85,9 @@ impl Qclass {
 
 #[derive(Debug)]
 pub struct Question {
-    qname: String,
-    qtype: Qtype,
-    qclass: Qclass,
+    pub qname: String,
+    pub qtype: Qtype,
+    pub qclass: Qclass,
 }
 
 impl Question {
@@ -99,7 +99,7 @@ impl Question {
         }
     }
 
-    pub fn with_bytes(mut bytes: Vec<u8>) -> Self {
+    pub fn with_bytes(bytes: Vec<u8>) -> Self {
         let bytes_len = bytes.len();
         let mut bytes_clone = bytes.clone();
 
