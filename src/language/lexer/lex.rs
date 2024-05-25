@@ -70,7 +70,6 @@ impl Lexer {
                         let token_type = self.check_type(token.clone());
                         self.tokens.push(token_type);
                     }
-                    self.tokens.push(Token::NewLines);
                     token = String::new();
                     self.column = 1;
                     self.line += 1;

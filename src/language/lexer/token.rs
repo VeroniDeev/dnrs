@@ -1,6 +1,6 @@
 use crate::structs::question::Qtype;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Token {
     Identifier(String),
     Equals,
@@ -10,6 +10,14 @@ pub enum Token {
     Guillemet,
     ValueString(String),
     ValueInt(i32),
-    NewLines,
     Qtype(Qtype),
+}
+
+impl Token {
+    pub fn as_identifier(&self) -> Option<String> {
+        match self {
+            Self::Identifier(value) => return Some(value.clone()),
+            _ => None,
+        }
+    }
 }
