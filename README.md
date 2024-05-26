@@ -71,7 +71,7 @@ Check the status
 If you see an error, don't hesitate to open an [issue](https://github.com/VeroniDeev/dnrs/issues)
 
 # Documentation
-the documentation is currently being written!
+You can find the documentation at this [link](https://dnrs.zoubheir.com).
 
 # Feedback
 If you have any comments, please do not hesitate to contact me at zoubheir@gmail.com.
