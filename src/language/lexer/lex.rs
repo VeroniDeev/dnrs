@@ -20,8 +20,8 @@ impl Lexer {
     }
 
     pub fn lexer(&mut self) {
-        let mut token = String::new();
-        let mut openbrace = false;
+        let mut token: String = String::new();
+        let mut openbrace: bool = false;
 
         for c in self.source.chars() {
             let char: String = c.to_string();

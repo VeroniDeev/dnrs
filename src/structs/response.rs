@@ -1,6 +1,8 @@
-use crate::language::{analyse, file_finder};
+use std::{collections::BTreeMap, str::Split};
 
-use super::request::Request;
+use crate::language::{analyse, file_finder, parser::parser::Literal};
+
+use super::{question::Qtype, request::Request};
 
 #[derive(Debug)]
 pub struct Response {
@@ -13,7 +15,7 @@ impl Response {
     }
 
     fn domain_to_bytes(&self, domain: String) -> Vec<u8> {
-        let domain_splitted = domain.split(".");
+        let domain_splitted: Split<&str> = domain.split(".");
         let mut domain_bytes: Vec<u8> = Vec::new();
 
         for domain_split in domain_splitted {
@@ -39,20 +41,20 @@ impl Response {
     }
 
     pub fn create_byte_response(&mut self) -> Vec<u8> {
-        let domain = self.request.question.qname.clone();
+        let domain: String = self.request.question.qname.clone();
 
-        let source = file_finder(domain.clone());
+        let source: Option<String> = file_finder(domain.clone());
 
         if source == None {
             self.request.header.flags = 0x8183;
             return self.request.to_bytes();
         }
 
-        let analyse = analyse(source.unwrap()).unwrap();
+        let analyse: BTreeMap<String, Literal> = analyse(source.unwrap()).unwrap();
 
-        let ttl = analyse.get("ttl").unwrap().clone().as_int().unwrap();
-        let dns_type = analyse.get("type").unwrap().clone().as_qtype().unwrap();
-        let ip = analyse.get("ip").unwrap().clone().as_str().unwrap();
+        let ttl: i32 = analyse.get("ttl").unwrap().clone().as_int().unwrap();
+        let dns_type: Qtype = analyse.get("type").unwrap().clone().as_qtype().unwrap();
+        let ip: String = analyse.get("ip").unwrap().clone().as_str().unwrap();
 
         self.request.header.flags = 0x8180;
 
@@ -76,7 +78,7 @@ impl Response {
         array.extend_from_slice(&ip_size.to_be_bytes());
         array.extend(self.ip_to_bytes(ip_array));
 
-        let mut bytes = self.request.to_bytes();
+        let mut bytes: Vec<u8> = self.request.to_bytes();
 
         bytes.extend(array);
 

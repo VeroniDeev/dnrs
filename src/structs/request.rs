@@ -17,7 +17,7 @@ impl Request {
         let header_bytes: Vec<u8> = bytes[0..12].to_vec();
         self.header = Header::with_bytes(header_bytes);
 
-        let question_bytes = bytes[12..].to_vec();
+        let question_bytes: Vec<u8> = bytes[12..].to_vec();
         self.question = Question::with_bytes(question_bytes);
     }
 

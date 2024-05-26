@@ -1,3 +1,5 @@
+use std::str::Split;
+
 #[derive(Debug, PartialEq, Clone)]
 pub enum Qtype {
     A = 1,
@@ -132,7 +134,7 @@ impl Question {
     }
 
     pub fn to_bytes(&self) -> Vec<u8> {
-        let domain_splitted = self.qname.split(".");
+        let domain_splitted: Split<&str> = self.qname.split(".");
         let mut domain_bytes: Vec<u8> = Vec::new();
 
         for domain_split in domain_splitted {
@@ -151,8 +153,8 @@ impl Question {
     }
 
     pub fn with_bytes(bytes: Vec<u8>) -> Self {
-        let bytes_len = bytes.len();
-        let mut bytes_clone = bytes.clone();
+        let bytes_len: usize = bytes.len();
+        let mut bytes_clone: Vec<u8> = bytes.clone();
 
         Self {
             qname: decode_string(&mut bytes_clone),
@@ -169,7 +171,7 @@ impl Question {
 }
 
 fn decode_string(bytes: &mut Vec<u8>) -> String {
-    let mut result = String::new();
+    let mut result: String = String::new();
 
     loop {
         let last_index: usize = (bytes[0] + 1).try_into().unwrap();
