@@ -21,8 +21,6 @@ async fn main() {
         let mut response: Response = Response::from(request);
         let data_response: Vec<u8> = response.create_byte_response();
 
-        println!("{:?}", data_response);
-
         server.send_to(&data_response, addr).await.unwrap();
     }
 }
