@@ -20,4 +20,13 @@ impl Request {
         let question_bytes = bytes[12..].to_vec();
         self.question = Question::with_bytes(question_bytes);
     }
+
+    pub fn to_bytes(&self) -> Vec<u8> {
+        let mut bytes: Vec<u8> = Vec::new();
+
+        bytes.extend(self.header.to_bytes());
+        bytes.extend(self.question.to_bytes());
+
+        return bytes;
+    }
 }

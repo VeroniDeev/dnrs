@@ -18,6 +18,36 @@ pub enum Literal {
     Object(Box<BTreeMap<String, Literal>>),
 }
 
+impl Literal {
+    pub fn as_int(&self) -> Option<i32> {
+        match self {
+            Literal::Int(value) => return Some(value.clone()),
+            _ => return None,
+        }
+    }
+
+    pub fn as_str(&self) -> Option<String> {
+        match self {
+            Literal::Str(value) => return Some(value.clone()),
+            _ => return None,
+        }
+    }
+
+    pub fn as_qtype(&self) -> Option<Qtype> {
+        match self {
+            Literal::Qtype(value) => return Some(value.clone()),
+            _ => return None,
+        }
+    }
+
+    pub fn as_object(&self) -> Option<Box<BTreeMap<String, Literal>>> {
+        match self {
+            Literal::Object(value) => return Some(value.clone()),
+            _ => return None,
+        }
+    }
+}
+
 pub struct Parser {
     index: usize,
     tokens: Vec<Token>,

@@ -66,6 +66,30 @@ impl Qtype {
             _ => Self::Unknow,
         }
     }
+
+    pub fn to_bytes(&self) -> u16 {
+        match self {
+            Self::A => 0x1,
+            Self::NS => 0x2,
+            Self::MD => 0x3,
+            Self::MF => 0x4,
+            Self::CNAME => 0x5,
+            Self::SOA => 0x6,
+            Self::MB => 0x7,
+            Self::MG => 0x8,
+            Self::MR => 0x9,
+            Self::NULL => 0xA,
+            Self::WKS => 0xB,
+            Self::PTR => 0xC,
+            Self::HINFO => 0xD,
+            Self::MINFO => 0xE,
+            Self::MX => 0xF,
+            Self::TXT => 0x10,
+            Self::AAAA => 0x1C,
+            // TODO
+            Self::Unknow => 0x99,
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -79,6 +103,14 @@ impl Qclass {
         match bytes {
             1 => Self::IN,
             _ => Self::Unknow,
+        }
+    }
+
+    pub fn to_bytes(&self) -> u16 {
+        match self {
+            Self::IN => 0x1,
+            // TODO
+            Self::Unknow => 0x99,
         }
     }
 }
@@ -97,6 +129,25 @@ impl Question {
             qtype: Qtype::Unknow,
             qclass: Qclass::Unknow,
         }
+    }
+
+    pub fn to_bytes(&self) -> Vec<u8> {
+        let domain_splitted = self.qname.split(".");
+        let mut domain_bytes: Vec<u8> = Vec::new();
+
+        for domain_split in domain_splitted {
+            domain_bytes.push(domain_split.len().try_into().unwrap());
+
+            for c in domain_split.chars() {
+                domain_bytes.push(c as u8);
+            }
+        }
+        domain_bytes.push(0x0);
+
+        domain_bytes.extend_from_slice(&self.qtype.to_bytes().to_be_bytes());
+        domain_bytes.extend_from_slice(&self.qclass.to_bytes().to_be_bytes());
+
+        return domain_bytes;
     }
 
     pub fn with_bytes(bytes: Vec<u8>) -> Self {

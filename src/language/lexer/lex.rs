@@ -94,6 +94,10 @@ impl Lexer {
                     self.tokens.push(Token::Identifier(token));
                     token = String::new();
                 }
+                "ip" => {
+                    self.tokens.push(Token::Identifier(token));
+                    token = String::new();
+                }
                 _ => {}
             }
         }

@@ -1,18 +1,33 @@
-use std::fs::read_to_string;
-
-use language::{lexer::lex::Lexer, parser::parser::Parser};
+use structs::{
+    header::Header,
+    question::{Qclass, Qtype, Question},
+    request::Request,
+    response::Response,
+};
+use tokio::net::UdpSocket;
 
 pub mod language;
 pub mod structs;
 
-fn main() {
-    let file = read_to_string("dns/zoubheir.com").unwrap();
-    let mut lexer = Lexer::new(file);
-    lexer.lexer();
+#[tokio::main]
+async fn main() {
+    let server = UdpSocket::bind("0.0.0.0:53").await.unwrap();
+    let mut buf = [0; 1024];
 
-    let mut parser = Parser::new(lexer.tokens);
-    match parser.parser() {
-        Ok(_) => println!("{:?}", parser.properties),
-        Err(err) => println!("{:?}", err),
+    loop {
+        let (len, addr) = server.recv_from(&mut buf).await.unwrap();
+
+        let mut data = buf.to_vec();
+        data.resize(len, 0);
+
+        let mut request = Request::new();
+        request.with_bytes(data);
+
+        let mut response = Response::from(request);
+        let data_response = response.create_byte_response();
+
+        println!("{:?}", data_response);
+
+        server.send_to(&data_response, addr).await.unwrap();
     }
 }

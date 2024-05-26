@@ -29,4 +29,17 @@ impl Header {
             arcount: u16::from_be_bytes([bytes[10], bytes[10]]),
         }
     }
+
+    pub fn to_bytes(&self) -> Vec<u8> {
+        let mut bytes: Vec<u8> = Vec::new();
+
+        bytes.extend_from_slice(&self.id.to_be_bytes());
+        bytes.extend_from_slice(&self.flags.to_be_bytes());
+        bytes.extend_from_slice(&self.qdcount.to_be_bytes());
+        bytes.extend_from_slice(&self.ancount.to_be_bytes());
+        bytes.extend_from_slice(&self.nscount.to_be_bytes());
+        bytes.extend_from_slice(&self.arcount.to_be_bytes());
+
+        return bytes;
+    }
 }
