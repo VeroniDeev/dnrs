@@ -18,7 +18,7 @@ fn read_file(path: String) -> String {
 }
 
 pub fn file_finder(domain: String) -> Option<String> {
-    let paths: ReadDir = fs::read_dir("dns").unwrap();
+    let paths: ReadDir = fs::read_dir("/etc/dnrs/dns").unwrap();
 
     for path in paths {
         let path_string: String = path.unwrap().path().display().to_string();
