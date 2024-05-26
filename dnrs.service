@@ -1,0 +1,12 @@
+[Unit]
+Description=Light dns server written in rust
+After=network.target
+
+[Service]
+ExecStart=/etc/dnrs/dnrs
+Restart=on-failure
+User=dnrs
+Group=dnrs
+
+[Install]
+WantedBy=multi-user.target
