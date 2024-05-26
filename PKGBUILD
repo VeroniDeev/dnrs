@@ -1,5 +1,6 @@
 pkgname="dnrs"
 pkgver="1.0.0"
+pkgrel=1
 pkgdesc="Light dns server written in rust"
 arch=('x86_64')
 url="https://github.com/VeroniDeev/dnrs"
@@ -11,7 +12,7 @@ sha256sums=('SKIP')
 
 build() {
   cd "$srcdir/$pkgname-$pkgver"
-  cargo build --release --locked
+  cargo build --release
 }
 
 package() {
@@ -20,7 +21,6 @@ package() {
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
   install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
 
-  # Créer le répertoire de configuration
   install -d "$pkgdir/etc/dnrs/dns"
 }
 
