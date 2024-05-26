@@ -1,3 +1,5 @@
+# Maintainer: Veroni zoubheir@gmail.com
+
 pkgname="dnrs"
 pkgver="1.0.0"
 pkgrel=1
